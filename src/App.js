@@ -1,25 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
-
+import { Routes, Route } from "react-router-dom";
+import HomePage from "./components/Homepage";
+import DetailsPage from "./components/DetailsPage";
+import { useEffect, useState } from "react";
+import "./App.css";
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [movies, setMovies] = useState(null);
+    const [movieLoaded, setMovieLoaded] = useState(false);
+    useEffect(() => {
+        const fetchMovies = async () => {
+            await fetch("https://api.tvmaze.com/search/shows?q=all")
+                .then(async (res) => await res.json())
+                .then(async (json) => {
+                    await setMovies(json);
+                    setMovieLoaded(true);
+                    console.log(movies, "Movies");
+                });
+        };
+        fetchMovies();
+    }, [movieLoaded]);
+
+    return (
+        <>
+            <Routes>
+                <Route path="/" element={<HomePage movies={movies} />} />
+                <Route path="/details" element={<DetailsPage />} />
+            </Routes>
+        </>
+    );
 }
 
 export default App;
